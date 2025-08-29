@@ -16,7 +16,7 @@ RUN echo -e "[aur-repo]\nSigLevel = Optional TrustAll\nServer = https://immutabl
 
 # 3. Utworzenie tymczasowego rootfs
 RUN mkdir -p $ROOTFS && \
-    pacstrap -c -C /etc/pacman.conf $ROOTFS base linux dracut ostree bootc-git bootupd-git
+    pacstrap -c -C /etc/pacman.conf --ignoreMounts $ROOTFS base linux dracut ostree bootc-git bootupd-git
 
 # 4. Commit rootfs do OSTree (branch: arch-coreod)
 RUN ostree --repo=$OSTREE_REPO commit \
