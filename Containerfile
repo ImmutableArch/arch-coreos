@@ -5,7 +5,7 @@ ENV OSTREE_REPO=/ostree/repo
 ENV ROOTFS=/tmp/rootfs
 
 # 1. Aktualizacja systemu + pacstrap + ostree
-RUN pacman -Syu --noconfirm base base-devel git wget curl archlinux-keyring pacstrap ostree
+RUN pacman -Syu --noconfirm base base-devel git wget curl archlinux-keyring arch-install-scripts ostree
 
 # 2. Utworzenie repo OSTree
 RUN mkdir -p $OSTREE_REPO && \
