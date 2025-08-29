@@ -8,8 +8,6 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    container:
-      image: archlinux:latest
 
     steps:
       - name: Checkout repo
@@ -17,9 +15,8 @@ jobs:
 
       - name: Install dependencies
         run: |
-          pacman -Syu --noconfirm \
-            base-devel git wget curl archlinux-keyring \
-            podman buildah skopeo
+          sudo apt-get update
+          sudo apt-get install podman skopeo buildah
 
       - name: Log in to GHCR with Podman
         run: |
