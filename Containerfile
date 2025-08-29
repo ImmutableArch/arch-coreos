@@ -11,9 +11,12 @@ RUN pacman -Syu --noconfirm base base-devel git wget curl archlinux-keyring arch
 RUN mkdir -p $OSTREE_REPO && \
     ostree --repo=$OSTREE_REPO init --mode=archive
 
+RUN echo -e "[aur-repo]\nSigLevel = Optional TrustAll\nServer = https://immutable-arch.github.io/packages/aur-repo/" \
+    >> /etc/pacman.conf
+
 # 3. Utworzenie tymczasowego rootfs
 RUN mkdir -p $ROOTFS && \
-    pacstrap -c -d $ROOTFS base linux dracut ostree bootc-git bootupd-git
+    pacstrap -c -C /etc/pacman.conf $ROOTFS base linux dracut ostree bootc-git bootupd-git
 
 # 4. Commit rootfs do OSTree (branch: arch-coreod)
 RUN ostree --repo=$OSTREE_REPO commit \
