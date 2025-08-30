@@ -7,8 +7,7 @@ RUN echo -e "[immutablearch]\nSigLevel = Optional TrustAll\nServer = https://imm
 
 RUN mkdir /newroot
 RUN mkdir -p /newroot/var/lib/pacman
-RUN pacman -Sy --noconfirm --root /newroot --dbpath /newroot/var/lib/pacman \
-    base linux linux-firmware ostree gptfdisk cryptsetup dosfstools xfsprogs bootc-git bootupd-git
+RUN pacstrap -K -C /etc/pacman.conf base linux linux-firmware ostree gptfdisk cryptsetup dosfstools xfsprogs bootc-git bootupd-git
 
 RUN mv /newroot/home /newroot/var/
 RUN ln -s var/home /newroot/home
