@@ -13,7 +13,7 @@ jobs:
       - name: Checkout repo
         uses: actions/checkout@v4
 
-      - name: Podamn Login
+      - name: Podman Login
         run: |
             echo "${{ secrets.GITHUB_TOKEN }}" | podman login ghcr.io -u ${{ github.actor }} --password-stdin
 
@@ -24,5 +24,5 @@ jobs:
 
       - name: Run build script
         run: |
-          chmod +x ./build.sh
-          ./build.sh
+          chmod +x ./build
+          ./build
