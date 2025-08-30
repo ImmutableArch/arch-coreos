@@ -2,7 +2,7 @@ FROM docker.io/archlinux:latest AS builder
 
 RUN pacman --noconfirm -Sy arch-install-scripts ostree
 RUN sed -i -e 's|^NoExtract.*||g' /etc/pacman.conf
-RUN echo -e "[aur-repo]\nSigLevel = Optional TrustAll\nServer = https://immutablearch.github.io/packages/aur-repo/" \
+RUN echo -e "[immutablearch]\nSigLevel = Optional TrustAll\nServer = https://immutablearch.github.io/packages/aur-repo/" \
     >> /etc/pacman.conf
 
 RUN mkdir /newroot
