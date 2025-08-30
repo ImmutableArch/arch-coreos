@@ -6,7 +6,8 @@ RUN echo -e "[aur-repo]\nSigLevel = Optional TrustAll\nServer = https://immutabl
     >> /etc/pacman.conf
 
 RUN mkdir /newroot
-RUN pacstrap --no-mount -K -C /etc/pacman.conf /newroot base linux linux-firmware ostree gptfdisk cryptsetup dosfstools xfsprogs bootc-git bootupd-git
+RUN pacman -Sy --noconfirm --root /newroot --dbpath /newroot/var/lib/pacman \
+    base linux linux-firmware ostree gptfdisk cryptsetup dosfstools xfsprogs bootc-git bootupd-git
 
 RUN mv /newroot/home /newroot/var/
 RUN ln -s var/home /newroot/home
