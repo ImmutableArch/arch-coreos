@@ -1,9 +1,9 @@
-name: Build & Push Arch-coreos
+name: Build Arch-CoreOS
 
 on:
   push:
-    branches: ["main"]
-  workflow_dispatch:
+    branches: [ "main" ]
+  pull_request:
 
 jobs:
   build:
@@ -11,25 +11,20 @@ jobs:
 
     steps:
       - name: Checkout repo
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
-      - name: Install dependencies
+      - name: Set up podman
+        uses: redhat-actions/podman-login@v1
+        with:
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Install podman
         run: |
           sudo apt-get update
-          sudo apt-get install podman skopeo buildah
+          sudo apt-get install -y podman
 
-      - name: Log in to GHCR with Podman
+      - name: Run build script
         run: |
-            OWNER=$(echo "${{ github.repository_owner }}" | tr '[:upper:]' '[:lower:]')
-            echo "${{ secrets.GITHUB_TOKEN }}" | podman login ghcr.io -u $OWNER --password-stdin
-
-
-      - name: Build Arch-coreod image
-        run: |
-          OWNER=$(echo "${{ github.repository_owner }}" | tr '[:upper:]' '[:lower:]')
-          podman build -t ghcr.io/$OWNER/arch-coreod:latest .
-
-      - name: Push to GHCR
-        run: |
-          OWNER=$(echo "${{ github.repository_owner }}" | tr '[:upper:]' '[:lower:]')
-          podman push ghcr.io/$OWNER/arch-coreos:latest
+          chmod +x ./build.sh
+          ./build.sh
