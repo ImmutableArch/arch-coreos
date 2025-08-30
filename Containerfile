@@ -6,7 +6,7 @@ RUN echo -e "[aur-repo]\nSigLevel = Optional TrustAll\nServer = https://immutabl
     >> /etc/pacman.conf
 
 RUN mkdir /newroot
-RUN mkdir /newroot/var/lib/pacman
+RUN mkdir -p /newroot/var/lib/pacman
 RUN pacman -Sy --noconfirm --root /newroot --dbpath /newroot/var/lib/pacman \
     base linux linux-firmware ostree gptfdisk cryptsetup dosfstools xfsprogs bootc-git bootupd-git
 
