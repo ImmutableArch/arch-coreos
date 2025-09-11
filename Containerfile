@@ -1,42 +1,52 @@
-FROM docker.io/archlinux:latest AS builder
+FROM docker.io/archlinux:latest
 
-RUN pacman --noconfirm -Sy arch-install-scripts ostree
 RUN sed -i -e 's|^NoExtract.*||g' /etc/pacman.conf
-RUN echo -e "[immutablearch]\nSigLevel = Optional TrustAll\nServer = https://immutablearch.github.io/packages/aur-repo/" \
-    >> /etc/pacman.conf
+RUN echo -e "[immutablearch]\nSigLevel = Optional TrustAll\nServer = https://immutablearch.github.io/packages/aur-repo/" \ >> /etc/pacman.conf
 
-RUN mkdir /newroot
-RUN mkdir -p /newroot/var/lib/pacman
-RUN pacstrap -K -C /etc/pacman.conf base linux linux-firmware ostree gptfdisk cryptsetup dosfstools xfsprogs bootc-git bootupd-git
+RUN pacman -Sy --noconfirm \
+  dracut \
+  linux \
+  linux-firmware \
+  ostree \
+  bootc \
+  bootupd \
+  btrfs-progs \
+  e2fsprogs \
+  xfsprogs \
+  grub \
+  grub-btrfs \
+  udev \
+  cpio \
+  zstd \
+  binutils \
+  dosfstools \
+  conmon \
+  crun \
+  netavark \
+  skopeo \
+  dbus \
+  dbus-glib \
+  glib2 \
+  shadow && \
+  pacman -S --clean --clean && \
+  rm -rf /var/cache/pacman/pkg/*
 
-RUN mv /newroot/home /newroot/var/
-RUN ln -s var/home /newroot/home
 
-RUN mv /newroot/mnt /newroot/var/
-RUN ln -s var/mnt /newroot/mnt
 
-RUN rmdir /newroot/var/opt
-RUN mv /newroot/opt /newroot/var/
-RUN ln -s var/opt /newroot/opt
+RUN echo "$(basename "$(find /usr/lib/modules -maxdepth 1 -type d | grep -v -E "*.img" | tail -n 1)")" > kernel_version.txt && \
+    dracut --force --no-hostonly --reproducible --zstd --verbose --kver "$(cat kernel_version.txt)" --add ostree "/usr/lib/modules/$(cat kernel_version.txt)/initramfs.img" && \
+    rm kernel_version.txt
 
-RUN mv /newroot/root /newroot/var/roothome
-RUN ln -s var/roothome /newroot/root
+RUN mkdir -p /boot /sysroot /var/home && \
+    rm -rf /var/log /home /root /usr/local /srv && \
+    ln -s /var/home /home && \
+    ln -s /var/roothome /root && \
+    ln -s /var/usrlocal /usr/local && \
+    ln -s /var/srv /srv
 
-RUN mv /newroot/srv /newroot/var/srv
-RUN ln -s var/srv /newroot/srv
+RUN sed -i 's|^HOME=.*|HOME=/var/home|' /etc/default/useradd
 
-COPY ostree-0-integration.conf /newroot/usr/lib/tmpfiles.d/
+COPY files/ostree/prepare-root.conf /usr/lib/ostree/prepare-root.conf
 
-RUN mkdir -p /newroot/sysroot/ostree
-RUN ln -s sysroot/ostree /newroot/ostree
-RUN ostree --repo=/repo init --mode=bare
-RUN ostree --repo=/repo commit --orphan --tree=dir=/newroot --no-xattrs
-
-# WORKAROUND: ERROR Creating ostree deployment: Performing deployment: Importing: Unencapsulating base: Importing commit: Invalid path (no parent) .lock
-RUN rm /repo/.lock
-
-RUN mv /repo /newroot/sysroot/ostree/
-
-FROM scratch
-COPY --from=builder /newroot /
 LABEL ostree.bootable="true"
+LABEL containers.bootc 1
