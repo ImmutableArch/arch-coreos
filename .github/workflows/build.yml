@@ -35,4 +35,4 @@ jobs:
           context: .
           push: true
           tags: |
-            ghcr.io/${{ github.repository_owner }}/arch-coreos:latest
+            ghcr.io/immutablearch/arch-coreos:latest
