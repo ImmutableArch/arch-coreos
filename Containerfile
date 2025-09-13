@@ -1,5 +1,6 @@
 FROM archlinux:latest
 
+RUN echo -e "[immutablearch]\nSigLevel = Optional TrustAll\nServer = https://immutablearch.github.io/packages/aur-repo/" \ >> /etc/pacman.conf
 # Update system and install packages
 RUN pacman -Syu --noconfirm && \
     pacman -Sy --noconfirm \
