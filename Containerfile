@@ -8,6 +8,8 @@ RUN pacman -Syu --noconfirm && \
         linux \
         linux-firmware \
         ostree \
+        ostree-ext-cli \
+        ostree-ext-cli-debug \
         composefs \
         systemd \
         btrfs-progs \
@@ -57,7 +59,7 @@ RUN ln -s var/srv /srv
 
 COPY ostree-0-integration.conf /newroot/usr/lib/tmpfiles.d/
 
-RUN ostree container commit
+RUN ostree-ext-cli container commit
 RUN bootc container init
 
 LABEL ostree.bootable="true"
