@@ -57,6 +57,8 @@ RUN ln -s var/roothome /root
 RUN mv /srv /var/srv
 RUN ln -s var/srv /srv
 
+RUN mkdir /sysroot
+
 COPY ostree-0-integration.conf /usr/lib/tmpfiles.d/
 COPY prepare-root.conf /usr/lib/ostree/prepare-root.conf
 
