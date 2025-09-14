@@ -59,7 +59,7 @@ RUN ln -s var/srv /srv
 
 COPY ostree-0-integration.conf /usr/lib/tmpfiles.d/
 
-RUN bootc container init
+RUN bootc container lnit
 RUN ostree-ext-cli container commit
 
 LABEL ostree.bootable="true"
