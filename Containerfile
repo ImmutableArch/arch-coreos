@@ -57,10 +57,10 @@ RUN ln -s var/roothome /root
 RUN mv /srv /var/srv
 RUN ln -s var/srv /srv
 
-COPY ostree-0-integration.conf /newroot/usr/lib/tmpfiles.d/
+COPY ostree-0-integration.conf /usr/lib/tmpfiles.d/
 
-RUN ostree-ext-cli container commit
 RUN bootc container init
+RUN ostree-ext-cli container commit
 
 LABEL ostree.bootable="true"
 LABEL containers.bootc 1
