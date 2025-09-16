@@ -98,7 +98,7 @@ jobs:
         uses: hhd-dev/rechunk@ded27feba22df48134eece2c66ba0fca1289ff40 # v1.2.3
         with:
             rechunk: 'ghcr.io/hhd-dev/rechunk:v1.2.3'
-            ref: ${{ env.IMAGE_NAME }}
+            ref: 'localhost/${{ env.IMAGE_NAME }}'
 
       - name: Login to GitHub Container Registry
         uses: docker/login-action@184bdaa0721073962dff0199f1fb9940f07167d1 # v3
