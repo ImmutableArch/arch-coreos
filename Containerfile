@@ -4,6 +4,8 @@ ENV BOOTC_ROOTFS_MOUNTPOINT=/mnt
 
 RUN mkdir -p "${BOOTC_ROOTFS_MOUNTPOINT}/var/lib/pacman"
 
+RUN echo -e "[immutablearch]\nSigLevel = Optional TrustAll\nServer = https://immutablearch.github.io/packages/aur-repo/" \ >> /etc/pacman.conf
+
 RUN pacman -r "${BOOTC_ROOTFS_MOUNTPOINT}" --cachedir=/var/cache/pacman/pkg -Syyuu --noconfirm \
   base \
   dracut \
@@ -12,6 +14,8 @@ RUN pacman -r "${BOOTC_ROOTFS_MOUNTPOINT}" --cachedir=/var/cache/pacman/pkg -Syy
   ostree \
   grub \
   grub-btrfs \
+  bootc-git \
+  bootupd-git \
   composefs \
   systemd \
   btrfs-progs \
@@ -39,28 +43,6 @@ RUN pacman -r "${BOOTC_ROOTFS_MOUNTPOINT}" --cachedir=/var/cache/pacman/pkg -Syy
 RUN pacman -Syu --noconfirm base-devel git rust ostree dracut whois && \
   pacman -S --clean && \
   rm -rf /var/cache/pacman/pkg/*
-
-RUN pacman -Sy
-
-RUN --mount=type=tmpfs,dst=/tmp cd /tmp && \
-    git clone https://github.com/bootc-dev/bootc.git bootc && \
-    cd bootc && \
-    git fetch --all && \
-    git switch origin/composefs-backend -d && \
-    cargo build --release --bins && \
-    install -Dpm0755 -t "${BOOTC_ROOTFS_MOUNTPOINT}/usr/lib/dracut/modules.d/37composefs/" ./crates/initramfs/dracut/module-setup.sh && \
-    install -Dpm0644 -t "${BOOTC_ROOTFS_MOUNTPOINT}/usr/lib/systemd/system/" ./crates/initramfs/bootc-root-setup.service && \
-    install -Dpm0755 -t "${BOOTC_ROOTFS_MOUNTPOINT}/usr/bin" ./target/release/bootc ./target/release/system-reinstall-bootc && \
-    install -Dpm0755  ./target/release/bootc-initramfs-setup "${BOOTC_ROOTFS_MOUNTPOINT}"/usr/lib/bootc/initramfs-setup 
-
-RUN --mount=type=tmpfs,dst=/tmp cd /tmp && \
-    git clone https://github.com/p5/coreos-bootupd.git bootupd && \
-    cd bootupd && \
-    git fetch --all && \
-    git switch origin/sdboot-support -d && \
-    cargo build --release --bins --features systemd-boot && \
-    install -Dpm0755 -t "${BOOTC_ROOTFS_MOUNTPOINT}/usr/bin" ./target/release/bootupd && \
-    ln -s ./bootupd "${BOOTC_ROOTFS_MOUNTPOINT}/usr/bin/bootupctl"
 
 RUN env \
     KERNEL_VERSION="$(basename "$(find "${BOOTC_ROOTFS_MOUNTPOINT}/usr/lib/modules" -maxdepth 1 -type d | grep -v -E "*.img" | tail -n 1)")" \
