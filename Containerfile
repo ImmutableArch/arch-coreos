@@ -70,8 +70,8 @@ RUN cd "${BOOTC_ROOTFS_MOUNTPOINT}" && \
   mkdir -p sysroot/ostree && \
   ln -s sysroot/ostree ostree
 
-RUN ostree --repo=/repo init --mode=bare-split-xattrs
-RUN ostree --repo=/repo commit --orphan --tree=dir="${BOOTC_ROOTFS_MOUNTPOINT}"
+RUN ostree --repo=/repo init --mode=archive-z2
+RUN ostree --repo=/repo commit --orphan --tree=dir="${BOOTC_ROOTFS_MOUNTPOINT}" --no-xattrs
 
 RUN rm /repo/.lock
 RUN mv /repo "${BOOTC_ROOTFS_MOUNTPOINT}"/sysroot/ostree/
