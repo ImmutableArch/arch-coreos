@@ -77,7 +77,7 @@ RUN ostree --repo=/repo commit --orphan --tree=dir="${BOOTC_ROOTFS_MOUNTPOINT}" 
 
 RUN rm /repo/.lock
 RUN mv /repo "${BOOTC_ROOTFS_MOUNTPOINT}"/sysroot/ostree/
-RUN ls /repo
+RUN ls "${BOOTC_ROOTFS_MOUNTPOINT}"/sysroot/ostree/
 
 FROM scratch AS runtime
 
