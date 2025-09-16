@@ -10,6 +10,8 @@ RUN pacman -r "${BOOTC_ROOTFS_MOUNTPOINT}" --cachedir=/var/cache/pacman/pkg -Syy
   linux \
   linux-firmware \
   ostree \
+  grub \
+  grub-btrfs \
   composefs \
   systemd \
   btrfs-progs \
@@ -84,8 +86,8 @@ RUN cd "${BOOTC_ROOTFS_MOUNTPOINT}" && \
   mkdir -p sysroot/ostree && \
   ln -s sysroot/ostree ostree
 
-RUN ostree --repo=/repo init --mode=bare
-RUN ostree --repo=/repo commit --orphan --tree=dir="${BOOTC_ROOTFS_MOUNTPOINT}" --no-xattrs
+RUN ostree --repo=/repo init --mode=bare-split-xattrs
+RUN ostree --repo=/repo commit --orphan --tree=dir="${BOOTC_ROOTFS_MOUNTPOINT}"
 
 RUN rm /repo/.lock
 RUN mv /repo "${BOOTC_ROOTFS_MOUNTPOINT}"/sysroot/ostree/
