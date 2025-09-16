@@ -14,6 +14,8 @@ RUN pacman -r "${BOOTC_ROOTFS_MOUNTPOINT}" --cachedir=/var/cache/pacman/pkg -Syy
   ostree \
   grub \
   grub-btrfs \
+  ostree-ext-cli \
+  ostree-ext-cli-debug \
   bootc-git \
   bootupd-git \
   composefs \
