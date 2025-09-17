@@ -75,13 +75,14 @@ RUN cd "${BOOTC_ROOTFS_MOUNTPOINT}" && \
 # Temp repo for files and repo with bare-split-xattrs
 RUN ostree --repo=/repo init --mode=bare-user
 RUN ostree --repo=/repo commit --branch=immutablearch/x86_64/arch-coreos --tree=dir="${BOOTC_ROOTFS_MOUNTPOINT}" --bootable
-RUN ostree --repo=/newrepo init --mode=bare-split-xattrs && \
-    ostree --repo=/newrepo pull-local /repo immutablearch/x86_64/arch-coreos && \
-    rm -rf /repo && \
-    mv /newrepo /repo
 
 RUN rm /repo/.lock
 RUN mv /repo "${BOOTC_ROOTFS_MOUNTPOINT}"/sysroot/ostree/
+
+RUN ostree-ext container encapsulate \
+  --repo="${BOOTC_ROOTFS_MOUNTPOINT}"/sysroot/ostree/repo \
+  immutablearch/x86_64/arch-coreos \
+  oci-archive:/mnt/os-container.tar:latest
 
 FROM scratch AS runtime
 
