@@ -1,0 +1,20 @@
+name: Fedora Kinoite Test
+
+on:
+  push:
+
+jobs:
+  kinoite:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Pull Fedora Kinoite container image
+        run: |
+          podman pull quay.io/fedora-ostree-desktops/kinoite:latest
+
+      - name: Run Kinoite container and show ostree config
+        run: |
+          podman run --rm quay.io/fedora-ostree-desktops/kinoite:latest \
+            cat /ostree/repo/config
