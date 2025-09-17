@@ -82,7 +82,7 @@ RUN mv /repo "${BOOTC_ROOTFS_MOUNTPOINT}"/sysroot/ostree/
 RUN ostree-ext-cli container encapsulate \
   --repo="${BOOTC_ROOTFS_MOUNTPOINT}"/sysroot/ostree/repo \
   immutablearch/x86_64/arch-coreos \
-  oci-archive:/mnt/os-container.tar:latest
+  docker://ghcr.io/${GITHUB_REPOSITORY_OWNER,,}/${GITHUB_REPOSITORY_NAME,,}:latest
 
 FROM scratch AS runtime
 
