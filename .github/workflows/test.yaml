@@ -12,9 +12,9 @@ jobs:
 
       - name: Pull Fedora Kinoite container image
         run: |
-          podman pull quay.io/fedora-ostree-desktops/kinoite:latest
+          podman pull quay.io/fedora-ostree-desktops/kinoite:42
 
       - name: Run Kinoite container and show ostree config
         run: |
-          podman run --rm quay.io/fedora-ostree-desktops/kinoite:latest \
-            cat /ostree/repo/config
+          podman run --rm quay.io/fedora-ostree-desktops/kinoite:42 \
+            cat /sysroot/ostree/repo/config
