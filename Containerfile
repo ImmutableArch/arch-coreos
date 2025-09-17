@@ -42,7 +42,7 @@ RUN pacman -r "${BOOTC_ROOTFS_MOUNTPOINT}" --cachedir=/var/cache/pacman/pkg -Syy
   pacman -S --clean && \
   rm -rf /var/cache/pacman/pkg/*
 
-RUN pacman -Syu --noconfirm base-devel git rust ostree dracut whois && \
+RUN pacman -Syu --noconfirm base-devel ostree-ext-cli ostree-ext-cli-debug git rust ostree dracut whois && \
   pacman -S --clean && \
   rm -rf /var/cache/pacman/pkg/*
 
@@ -79,7 +79,7 @@ RUN ostree --repo=/repo commit --branch=immutablearch/x86_64/arch-coreos --tree=
 RUN rm /repo/.lock
 RUN mv /repo "${BOOTC_ROOTFS_MOUNTPOINT}"/sysroot/ostree/
 
-RUN ostree-ext container encapsulate \
+RUN ostree-ext-cli container encapsulate \
   --repo="${BOOTC_ROOTFS_MOUNTPOINT}"/sysroot/ostree/repo \
   immutablearch/x86_64/arch-coreos \
   oci-archive:/mnt/os-container.tar:latest
