@@ -74,9 +74,9 @@ RUN cd "${BOOTC_ROOTFS_MOUNTPOINT}" && \
 
 # Temp repo for files and repo with bare-split-xattrs
 RUN ostree --repo=/repo init --mode=bare-user
-RUN ostree --repo=/repo commit --orphan --tree=dir="${BOOTC_ROOTFS_MOUNTPOINT}" --bootable
+RUN ostree --repo=/repo commit --branch=immutablearch/x86_64/arch-coreos --tree=dir="${BOOTC_ROOTFS_MOUNTPOINT}" --bootable
 RUN ostree --repo=/newrepo init --mode=bare-split-xattrs && \
-    ostree --repo=/newrepo pull-local /repo && \
+    ostree --repo=/newrepo pull-local /repo immutablearch/x86_64/arch-coreos && \
     rm -rf /repo && \
     mv /newrepo /repo
 
