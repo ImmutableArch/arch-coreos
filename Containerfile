@@ -73,16 +73,14 @@ RUN cd "${BOOTC_ROOTFS_MOUNTPOINT}" && \
   ln -s sysroot/ostree ostree
 
 # Temp repo for files and repo with bare-split-xattrs
-RUN ostree --repo=/repo init --mode=bare-user
-RUN ostree --repo=/repo commit --branch=immutablearch/x86_64/arch-coreos --tree=dir="${BOOTC_ROOTFS_MOUNTPOINT}" --bootable
+RUN ostree --repo=/repo init --mode=bare-split-xattrs
+RUN ostree --repo=/repo commit --branch=immutablearch/x86_64/arch-coreos --bootable "${BOOTC_ROOTFS_MOUNTPOINT}"/
+RUN ostree --repo=/repo log immutablearch/x86_64/arch-coreos
+RUN ostree --repo=/repo ls immutablearch/x86_64/arch-coreos
+
 
 RUN rm /repo/.lock
 RUN mv /repo "${BOOTC_ROOTFS_MOUNTPOINT}"/sysroot/ostree/
-
-RUN ostree-ext-cli container encapsulate \
-  --repo="${BOOTC_ROOTFS_MOUNTPOINT}"/sysroot/ostree/repo \
-  immutablearch/x86_64/arch-coreos \
-  docker://ghcr.io/${GITHUB_REPOSITORY_OWNER,,}/${GITHUB_REPOSITORY_NAME,,}:latest
 
 FROM scratch AS runtime
 
