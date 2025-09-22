@@ -44,9 +44,12 @@ pacman -r "${INSTALL_DIR}" --cachedir=/var/cache/pacman/pkg -Syyuu --noconfirm \
   pacman -S --clean && \
   rm -rf /var/cache/pacman/pkg/*
 
-
-KERNEL_VERSION="$(basename "$(find "${INSTALL_DIR}/usr/lib/modules" -maxdepth 1 -type d | grep -v -E "*.img" | tail -n 1)")" \
-dracut --force -r "${INSTALL_DIR}" --no-hostonly --reproducible --zstd --verbose --kver "${KERNEL_VERSION}" --add ostree "${INSTALL_DIR}/usr/lib/modules/${KERNEL_VERSION}/initramfs.img"
+arch-chroot "${INSTALL_DIR}" /bin/bash -c '
+  set -euo pipefail
+  KERNEL_VERSION="$(basename "$(find /usr/lib/modules -maxdepth 1 -type d | grep -v -E "*.img" | tail -n 1)")"
+  echo "Detected kernel version: $KERNEL_VERSION"
+  dracut --force -r / --no-hostonly --reproducible --zstd --verbose --kver "$KERNEL_VERSION" "/usr/lib/modules/$KERNEL_VERSION/initramfs.img"
+'
 
 rm -rf ${INSTALL_DIR}/boot
 cd "${INSTALL_DIR}" && \
