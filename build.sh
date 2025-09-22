@@ -44,9 +44,9 @@ pacman -r "${INSTALL_DIR}" --cachedir=/var/cache/pacman/pkg -Syyuu --noconfirm \
   pacman -S --clean && \
   rm -rf /var/cache/pacman/pkg/*
 
-env \
-    KERNEL_VERSION="$(basename "$(find "${INSTALL_DIR}/usr/lib/modules" -maxdepth 1 -type d | grep -v -E "*.img" | tail -n 1)")" \
-    sh -c 'dracut --force -r "${INSTALL_DIR}" --no-hostonly --reproducible --zstd --verbose --kver "${KERNEL_VERSION}" --add ostree "${INSTALL_DIR}/usr/lib/modules/${KERNEL_VERSION}/initramfs.img"'
+
+KERNEL_VERSION="$(basename "$(find "${INSTALL_DIR}/usr/lib/modules" -maxdepth 1 -type d | grep -v -E "*.img" | tail -n 1)")" \
+dracut --force -r "${INSTALL_DIR}" --no-hostonly --reproducible --zstd --verbose --kver "${KERNEL_VERSION}" --add ostree "${INSTALL_DIR}/usr/lib/modules/${KERNEL_VERSION}/initramfs.img"
 
 rm -rf ${INSTALL_DIR}/boot
 cd "${INSTALL_DIR}" && \
@@ -67,7 +67,7 @@ cd "${INSTALL_DIR}" && \
 
 ostree --repo=/repo init --mode=bare-user
 ostree --repo=/repo commit --branch=immutablearch/x86_64/arch-coreos --bootable --tree=dir=${INSTALL_DIR}
+ostree --repo=/repo ls immutablearch/x86_64/arch-coreos
 rm /repo/.lock
-mv /repo ${INSTALL_DIR}/ostree
 
 ostree-ext-cli container encapsulate --repo=/repo immutablearch/x86_64/arch-coreos oci-archive:/tmp/image.tar
