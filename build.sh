@@ -1,7 +1,5 @@
 #!/bin/bash
 
-set -oue pipefail
-
 INSTALL_DIR="/tmp/rootfs"
 mkdir -p ${INSTALL_DIR}/var/lib/pacman
 
