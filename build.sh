@@ -7,10 +7,10 @@ mkdir -p ${INSTALL_DIR}/var/lib/pacman
 
 echo -e "[immutablearch]\nSigLevel = Optional TrustAll\nServer = https://immutablearch.github.io/packages/aur-repo/" \ >> /etc/pacman.conf
 
-yes | sudo pacman -Syyu
-yes | sudo pacman -S ostree-ext-cli ostree-ext-cli-debug skopeo git rust ostree dracut whois
+yes | pacman -Syyu
+yes | pacman -S ostree-ext-cli ostree-ext-cli-debug skopeo git rust ostree dracut whois
 
-sudo pacman -r "${INSTALL_DIR}" --cachedir=/var/cache/pacman/pkg -Syyuu --noconfirm \
+pacman -r "${INSTALL_DIR}" --cachedir=/var/cache/pacman/pkg -Syyuu --noconfirm \
   base \
   dracut \
   linux \
