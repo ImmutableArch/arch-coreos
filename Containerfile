@@ -40,7 +40,7 @@ RUN pacman -r "${BOOTC_ROOTFS_MOUNTPOINT}" --cachedir=/var/cache/pacman/pkg -Syy
   pacman -S --clean && \
   rm -rf /var/cache/pacman/pkg/*
 
-RUN pacman -Syu --noconfirm base-devel git rust ostree ostree-ext-cli ostree-ext-cli-debug dracut whois && \
+RUN pacman -Syu --noconfirm base-devel git rust ostree ostree-ext-cli ostree-ext-cli-debug skopeo dracut whois && \
   pacman -S --clean && \
   rm -rf /var/cache/pacman/pkg/*
 
