@@ -44,11 +44,19 @@ RUN pacman -Syu --noconfirm base-devel git rust ostree ostree-ext-cli ostree-ext
   pacman -S --clean && \
   rm -rf /var/cache/pacman/pkg/*
 
-RUN env \
-    KERNEL_VERSION="$(basename "$(find "${BOOTC_ROOTFS_MOUNTPOINT}/usr/lib/modules" -maxdepth 1 -type d | grep -v -E "*.img" | tail -n 1)")" \
-    sh -c 'dracut --force -r "${BOOTC_ROOTFS_MOUNTPOINT}" --no-hostonly --reproducible --zstd --verbose --kver "${KERNEL_VERSION}" --add ostree lvm dm' \
+RUN KERNEL_VERSION="$(basename "$(find "${BOOTC_ROOTFS_MOUNTPOINT}/usr/lib/modules" -maxdepth 1 -type d | grep -v -E "*.img" | tail -n 1)")" && \
+    dracut --force \
+           --root "${BOOTC_ROOTFS_MOUNTPOINT}" \
+           --no-hostonly \
+           --reproducible \
+           --zstd \
+           --verbose \
+           --kver "${KERNEL_VERSION}" \
+           --add "ostree lvm dm" \
+           ${BOOTC_ROOTFS_MOUNTPOINT}/usr/lib/modules/${KERNEL_VERSION}/
 
-RUN cp -v ${BOOTC_ROOTFS_MOUNTPOINT}/boot/*.img ${BOOTC_ROOTFS_MOUNTPOINT}/usr/lib/modules/${KERNEL_VERSION}/
+
+#RUN cp -v ${BOOTC_ROOTFS_MOUNTPOINT}/boot/*.img ${BOOTC_ROOTFS_MOUNTPOINT}/usr/lib/modules/${KERNEL_VERSION}/
 
 
 RUN rm -rf "${BOOTC_ROOTFS_MOUNTPOINT}"/boot
@@ -77,10 +85,10 @@ RUN ostree --repo=/repo init --mode=bare-user
 RUN ostree --repo=/repo commit --branch=immutablearch/x86_64/arch-coreos --bootable --tree=dir=${BOOTC_ROOTFS_MOUNTPOINT}
 RUN ostree --repo=/repo ls immutablearch/x86_64/arch-coreos
 RUN rm /repo/.lock
-RUN ostree-ext-cli container encapsulate --repo=/repo immutablearch/x86_64/arch-coreos oci-archive:/image.tar
+RUN ostree-ext-cli container encapsulate --repo=/repo immutablearch/x86_64/arch-coreos oci-archive:/tmp/image.tar
 
 FROM scratch AS runtime
 
-COPY --from=builder /image.tar /
+COPY --from=builder /tmp/image.tar /
 
 #LABEL containers.bootc 1
