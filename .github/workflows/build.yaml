@@ -5,7 +5,7 @@ on:
     branches:
       - main
   schedule:
-    - cron: "05 10 * * *" # 10:05am UTC everyday
+    - cron: "05 10 * * *"
   push:
     branches:
       - main
@@ -21,16 +21,13 @@ env:
   DEFAULT_TAG: "latest"
 
 concurrency:
-  group: ${{ github.workflow }}-${{ github.ref || github.run_id }}-${{ inputs.brand_name}}-${{ inputs.stream_name }}
+  group: ${{ github.workflow }}-${{ github.ref || github.run_id }}
   cancel-in-progress: true
 
 jobs:
   build_push:
     name: Build and push image
     runs-on: ubuntu-24.04
-
-    container:
-        image: archlinux:latest
 
     permissions:
       contents: read
@@ -41,21 +38,27 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Build Arch-CoreOS
+      - name: Install dependencies
         run: |
-            ./build.sh
-      - name: Install Podman
+          sudo apt-get update
+          sudo apt-get install -y podman buildah
+
+      - name: Build Arch-CoreOS container with Buildah
         run: |
-          pacman -Syu --noconfirm podman
+          buildah bud -t arch-coreos -f Containerfile .
+
+      - name: Export image to tarball
+        run: |
+          buildah push arch-coreos:latest docker-archive:/tmp/image.tar:latest
 
       - name: Log in to GHCR with Podman
         env:
           GHCR_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          echo "$GHCR_TOKEN" | sudo podman login ghcr.io -u "${{ github.actor }}" --password-stdin
+          echo "$GHCR_TOKEN" | podman login ghcr.io -u "${{ github.actor }}" --password-stdin
 
       - name: Push to GHCR
         run: |
-            podman load -i /tmp/image.tar
-            podman tag image:latest ghcr.io/immutablearch/arch-coreos:latest
-            podman push ghcr.io/immutablearch/arch-coreos:latest
+          podman load -i /tmp/image.tar
+          podman tag localhost/arch-coreos:latest $IMAGE_REGISTRY/$IMAGE_NAME:$DEFAULT_TAG
+          podman push $IMAGE_REGISTRY/$IMAGE_NAME:$DEFAULT_TAG
