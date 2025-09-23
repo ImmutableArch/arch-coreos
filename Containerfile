@@ -48,6 +48,7 @@ RUN env \
     KERNEL_VERSION="$(basename "$(find "${BOOTC_ROOTFS_MOUNTPOINT}/usr/lib/modules" -maxdepth 1 -type d | grep -v -E "*.img" | tail -n 1)")" \
     sh -c 'dracut --force -r "${BOOTC_ROOTFS_MOUNTPOINT}" --no-hostonly --reproducible --zstd --verbose --kver "${KERNEL_VERSION}" --add ostree lvm dm "${BOOTC_ROOTFS_MOUNTPOINT}/usr/lib/modules/${KERNEL_VERSION}/initramfs.img"'
 
+
 RUN rm -rf "${BOOTC_ROOTFS_MOUNTPOINT}"/boot
 
 RUN cd "${BOOTC_ROOTFS_MOUNTPOINT}" && \
