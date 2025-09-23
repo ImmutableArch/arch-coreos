@@ -17,7 +17,7 @@ env:
   IMAGE_DESC: "Experimental arch-coreos OSTree/Bootc Image"
   IMAGE_KEYWORDS: "bootc,archlinux,arch"
   IMAGE_NAME: "${{ github.event.repository.name }}"
-  IMAGE_REGISTRY: "ghcr.io/${{ github.repository_owner }}"
+  IMAGE_REGISTRY: "ghcr.io/immutablearch"
   DEFAULT_TAG: "latest"
 
 concurrency:
@@ -45,11 +45,10 @@ jobs:
 
       - name: Build Arch-CoreOS container with Buildah
         run: |
-          buildah bud -t arch-coreos -f Containerfile .
-
-      - name: Export image to tarball
-        run: |
-          buildah push arch-coreos:latest docker-archive:/tmp/image.tar:latest
+          buildah bud -t temp -f Containerfile .
+          cid=$(podman create temp)
+          podman cp $cid:/tmp/image.tar /tmp/image.tar
+          podman rm $cid
 
       - name: Log in to GHCR with Podman
         env:
