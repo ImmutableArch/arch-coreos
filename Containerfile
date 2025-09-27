@@ -79,5 +79,6 @@ RUN ostree --repo=/repo commit --branch=immutablearch/x86_64/arch-coreos --boota
 RUN ostree --repo=/repo ls immutablearch/x86_64/arch-coreos
 RUN rm /repo/.lock
 RUN ostree-ext-cli container encapsulate --repo=/repo immutablearch/x86_64/arch-coreos oci-archive:/tmp/image.tar
+RUN ls /tmp
 
 #LABEL containers.bootc 1
