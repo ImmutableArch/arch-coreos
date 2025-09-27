@@ -54,8 +54,8 @@ jobs:
         env:
           GHCR_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-                skopeo login --username "${{ github.actor }}" --password "${{ env.GHCR_TOKEN }}" ghcr.io
+            skopeo login --username "${{ github.actor }}" --password "${{ env.GHCR_TOKEN }}" ghcr.io
 
       - name: Push to GHCR
         run: |
-            skopeo copy --dest-compress-format gzip /tmp/image.ociarchive docker://${IMAGE_REGISTRY}/$IMAGE_NAME:$DEFAULT_TAG
+            skopeo copy --dest-compress-format gzip oci-archive:/tmp/image.ociarchive docker://${IMAGE_REGISTRY}/$IMAGE_NAME:$DEFAULT_TAG
