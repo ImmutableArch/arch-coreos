@@ -1,7 +1,10 @@
-name: Fedora Kinoite Test
+name: Check OSTree Repo file
 
 on:
-  push:
+  workflow_dispatch:
+
+env:
+    IMAGE: "ghcr.io/immutablearch/arch-coreos:latest"
 
 jobs:
   kinoite:
@@ -12,9 +15,9 @@ jobs:
 
       - name: Pull Fedora Kinoite container image
         run: |
-          podman pull quay.io/fedora-ostree-desktops/kinoite:42
+          podman pull ${{ env.IMAGE }}
 
       - name: Run Kinoite container and show ostree config
         run: |
-          podman run --rm quay.io/fedora-ostree-desktops/kinoite:42 \
+          podman run --rm ${{ env.IMAGE }} \
             cat /sysroot/ostree/repo/config
