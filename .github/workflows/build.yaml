@@ -41,13 +41,13 @@ jobs:
       - name: Install dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y podman buildah
+          sudo apt-get install -y podman buildah skopeo
 
       - name: Build Arch-CoreOS container with Buildah
         run: |
           buildah bud -t temp -f Containerfile .
           cid=$(podman create temp)
-          podman cp $cid:/tmp/image.tar /tmp/image.tar
+          podman cp $cid:/tmp/image.ociarchive image.ociarchive
           podman rm $cid
 
       - name: Log in to GHCR with Podman
@@ -58,6 +58,4 @@ jobs:
 
       - name: Push to GHCR
         run: |
-          podman load -i /tmp/image.tar
-          podman tag localhost/arch-coreos:latest $IMAGE_REGISTRY/$IMAGE_NAME:$DEFAULT_TAG
-          podman push $IMAGE_REGISTRY/$IMAGE_NAME:$DEFAULT_TAG
+            skopeo copy --dest-compress-format gzip image.ociarchive docker://${IMAGE_REGISTRY}/$IMAGE_NAME:$DEFAULT_TAG
