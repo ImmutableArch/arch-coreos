@@ -47,15 +47,15 @@ jobs:
         run: |
           buildah bud -t temp -f Containerfile .
           cid=$(podman create temp)
-          podman cp $cid:/tmp/image.ociarchive image.ociarchive
+          podman cp $cid:/tmp/image.ociarchive /tmp/image.ociarchive
           podman rm $cid
 
       - name: Log in to GHCR with Podman
         env:
           GHCR_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          echo "$GHCR_TOKEN" | podman login ghcr.io -u "${{ github.actor }}" --password-stdin
+                skopeo login --username "${{ github.actor }}" --password "${{ env.GHCR_TOKEN }}" ghcr.io
 
       - name: Push to GHCR
         run: |
-            skopeo copy --dest-compress-format gzip image.ociarchive docker://${IMAGE_REGISTRY}/$IMAGE_NAME:$DEFAULT_TAG
+            skopeo copy --dest-compress-format gzip /tmp/image.ociarchive docker://${IMAGE_REGISTRY}/$IMAGE_NAME:$DEFAULT_TAG
