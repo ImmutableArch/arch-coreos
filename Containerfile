@@ -75,7 +75,7 @@ RUN sed -i 's|^HOME=.*|HOME=/var/home|' "${BOOTC_ROOTFS_MOUNTPOINT}/etc/default/
 RUN echo -e '[composefs]\nenabled = yes\n[sysroot]\nreadonly = true' | tee "${BOOTC_ROOTFS_MOUNTPOINT}/usr/lib/ostree/prepare-root.conf"
 
 RUN ostree --repo=/repo init --mode=bare-user
-RUN ostree --repo=/repo commit --branch=immutablearch/x86_64/arch-coreos --bootable --tree=dir=${BOOTC_ROOTFS_MOUNTPOINT}
+RUN ostree --repo=/repo commit --branch=immutablearch/x86_64/arch-coreos --bootable --no-xattrs --tree=dir=${BOOTC_ROOTFS_MOUNTPOINT}
 RUN ostree --repo=/repo ls immutablearch/x86_64/arch-coreos
 RUN rm /repo/.lock
 RUN ostree-ext-cli container encapsulate --repo=/repo immutablearch/x86_64/arch-coreos oci-archive:/tmp/image.ociarchive
