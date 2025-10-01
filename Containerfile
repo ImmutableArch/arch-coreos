@@ -74,6 +74,10 @@ RUN sed -i 's|^HOME=.*|HOME=/var/home|' "${BOOTC_ROOTFS_MOUNTPOINT}/etc/default/
 # Necessary for `bootc install`
 RUN echo -e '[composefs]\nenabled = yes\n[sysroot]\nreadonly = true' | tee "${BOOTC_ROOTFS_MOUNTPOINT}/usr/lib/ostree/prepare-root.conf"
 
+RUN mv "${BOOTC_ROOTFS_MOUNTPOINT}/etc" "${BOOTC_ROOTFS_MOUNTPOINT}/usr/etc" && \
+    echo "etc moved to /usr/etc"
+
+
 RUN ostree --repo=/repo init --mode=bare-user
 RUN ostree --repo=/repo commit --branch=immutablearch/x86_64/arch-coreos --bootable --no-xattrs --disable-fsync --tree=dir=${BOOTC_ROOTFS_MOUNTPOINT}
 RUN ostree --repo=/repo ls immutablearch/x86_64/arch-coreos
