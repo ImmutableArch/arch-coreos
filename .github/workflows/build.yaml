@@ -1,5 +1,6 @@
 ---
 name: Build container image
+
 on:
   pull_request:
     branches:
@@ -13,21 +14,19 @@ on:
       - "**/README.md"
   workflow_dispatch:
 
-env:
-  IMAGE_DESC: "Experimental arch-coreos OSTree/Bootc Image"
-  IMAGE_KEYWORDS: "bootc,archlinux,arch"
-  IMAGE_NAME: "${{ github.event.repository.name }}"
-  IMAGE_REGISTRY: "ghcr.io/immutablearch"
-  DEFAULT_TAG: "latest"
-
-concurrency:
-  group: ${{ github.workflow }}-${{ github.ref || github.run_id }}
-  cancel-in-progress: true
-
 jobs:
   build_push:
     name: Build and push image
     runs-on: ubuntu-24.04
+
+    # 👇 To uruchomi cały job w Twoim kontenerze
+    container:
+      image: ghcr.io/immutablearch/buildc:latest
+      # Jeśli kontener wymaga autoryzacji (np. prywatny), dodaj credentials:
+      credentials:
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+      # Opcjonalnie możesz dodać zmienne środowiskowe:
 
     permissions:
       contents: read
@@ -38,24 +37,6 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Install dependencies
+      - name: Build Image
         run: |
-          sudo apt-get update
-          sudo apt-get install -y podman buildah skopeo
-
-      - name: Build Arch-CoreOS container with Buildah
-        run: |
-          buildah bud -t temp -f Containerfile .
-          cid=$(podman create temp)
-          podman cp $cid:/tmp/image.ociarchive /tmp/image.ociarchive
-          podman rm $cid
-
-      - name: Log in to GHCR with Podman
-        env:
-          GHCR_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-            skopeo login --username "${{ github.actor }}" --password "${{ env.GHCR_TOKEN }}" ghcr.io
-
-      - name: Push to GHCR
-        run: |
-            skopeo copy --dest-compress-format gzip oci-archive:/tmp/image.ociarchive docker://${IMAGE_REGISTRY}/$IMAGE_NAME:$DEFAULT_TAG
+            ./build.sh
