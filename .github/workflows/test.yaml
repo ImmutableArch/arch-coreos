@@ -4,20 +4,24 @@ on:
   workflow_dispatch:
 
 env:
-    IMAGE: "docker.io/krolmiki2011/arch-coreos:latest"
+  IMAGE: "docker.io/krolmiki2011/arch-coreos:latest"
 
 jobs:
-  kinoite:
+  arch-coreos:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Pull Fedora Kinoite container image
+      - name: Pull Arch CoreOS container image
         run: |
           podman pull ${{ env.IMAGE }}
 
-      - name: Run Kinoite container and show ostree config
+      - name: Inspect Image (count layers)
+        run: |
+          skopeo inspect docker://${{ env.IMAGE }} | jq '.Layers | length'
+
+      - name: Show OSTree repo config
         run: |
           podman run --rm ${{ env.IMAGE }} \
             cat /sysroot/ostree/repo/config
