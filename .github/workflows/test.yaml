@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
 
 env:
-    IMAGE: "ghcr.io/immutablearch/arch-coreos:latest"
+    IMAGE: "docker.io/krolmiki2011/arch-coreos:latest"
 
 jobs:
   kinoite:
