@@ -17,9 +17,9 @@ jobs:
         run: |
           podman pull ${{ env.IMAGE }}
 
-      - name: Inspect Image (count layers)
+      - name: Show OCI Image Manifest
         run: |
-          skopeo inspect docker://${{ env.IMAGE }} | jq '.Layers | length'
+          skopeo inspect docker://${{ env.IMAGE }} | jq '.Manifest'
 
       - name: Show OSTree repo config
         run: |
