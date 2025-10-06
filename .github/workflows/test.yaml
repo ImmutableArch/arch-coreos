@@ -19,7 +19,7 @@ jobs:
 
       - name: Show OCI Image Manifest
         run: |
-          skopeo inspect docker://${{ env.IMAGE }} | jq '.Manifest'
+          skopeo inspect docker://${{ env.IMAGE }}
 
       - name: Show OSTree repo config
         run: |
