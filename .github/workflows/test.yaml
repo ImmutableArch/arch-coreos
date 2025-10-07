@@ -1,10 +1,13 @@
 name: Check OSTree Repo file
 
 on:
+  push:
+    branches:
+      - main
   workflow_dispatch:
 
 env:
-  IMAGE: "docker.io/krolmiki2011/arch-coreos:latest"
+  IMAGE: "quay.io/fedora-ostree-desktops/kinoite:42"
 
 jobs:
   arch-coreos:
