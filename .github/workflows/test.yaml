@@ -7,7 +7,7 @@ on:
   workflow_dispatch:
 
 env:
-  IMAGE: "quay.io/fedora-ostree-desktops/kinoite:42"
+  IMAGE: "docker.io/krolmiki2011/arch-coreos:latest"
 
 jobs:
   arch-coreos:
