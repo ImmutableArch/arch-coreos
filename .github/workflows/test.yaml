@@ -7,7 +7,7 @@ on:
   workflow_dispatch:
 
 env:
-  IMAGE: "docker.io/krolmiki2011/arch-coreos:latest"
+  IMAGE: "quay.io/fedora-ostree-desktops/kinoite:42"
 
 jobs:
   arch-coreos:
@@ -27,4 +27,4 @@ jobs:
       - name: Show OSTree repo config
         run: |
           podman run --rm ${{ env.IMAGE }} \
-            cat /sysroot/ostree/repo/config
+            ls /usr/lib/efi
