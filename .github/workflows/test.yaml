@@ -27,4 +27,4 @@ jobs:
       - name: Show OSTree repo config
         run: |
           podman run --rm ${{ env.IMAGE }} \
-            ls /usr/lib/efi
+            cat /etc/fstab
