@@ -23,8 +23,3 @@ jobs:
       - name: Show OCI Image Manifest
         run: |
           skopeo inspect docker://${{ env.IMAGE }}
-
-      - name: Show OSTree repo config
-        run: |
-          podman run --rm ${{ env.IMAGE }} \
-            cat /etc/fstab
